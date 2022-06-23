@@ -1,24 +1,44 @@
+def gv
+
 pipeline {
     agent any
-
-    stages {
-        stage('Git Clone') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sandeepnaidugalla/git-demo1.git']]])
-                echo 'Cloning Git'
-            }
-        }
-        stage('Sandeep') {
-            steps {
-                bat 'python sandeep.py'
-                
-            }
-        }
-        stage('Deepu') {
-            steps {
-                bat 'python deepu.py'
-            
-            }
-        }
+    parameters {
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
     }
+    stages {
+        stage("init") {
+            steps {
+                script {
+                   gv = load "script.groovy" 
+                }
+            }
+        }
+        stage("build") {
+            steps {
+                script {
+                    gv.buildApp()
+                }
+            }
+        }
+        stage("test") {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
+            steps {
+                script {
+                    gv.testApp()
+                }
+            }
+        }
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }
+    }   
 }
