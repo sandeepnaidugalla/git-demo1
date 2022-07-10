@@ -1,0 +1,35 @@
+from boto3.session import Session
+
+
+
+ACCESS_KEY_ID = 'AKIA5QLSVZI6QMZBFU6Q'
+
+SECRET_KEY = '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'
+
+session = Session(aws_access_key_id=ACCESS_KEY_ID,
+
+aws_secret_access_key=SECRET_KEY)
+
+
+
+s3 = session.resource('s3')
+
+
+
+bucket = 'hclvoltmx-nonprod-loadingzone'
+
+
+
+my_bucket = s3.Bucket(bucket)
+
+
+
+for s3_files in my_bucket.objects.all():
+
+     print(s3_files.key)
+
+version = input("Enter input: ")
+
+my_bucket.download_file('visualizer_enterprise/90/plugins/com.kony.cloudmiddleware_'+version+'.DEV_v202102112200_r0.jar.md5','./com.kony.cloudmiddleware_9.2.0.DEV_v202102112200_r0.jar.md5')
+
+my_bucket.download_file('visualizer_enterprise/90/plugins/com.kony.cloudthirdparty_'+version+'.DEV_v202102112200_r0.jar.md5','./com.kony.cloudthirdparty_9.2.0.DEV_v202102112200_r0.jar.md5')
